@@ -29,8 +29,8 @@
   # that they reside in. It is built by calling the derivation in the
   # grammars.nix file, then taking the runtime directory in the git repo
   # and hooking symlinks up to it.
-  grammars = callPackage ./grammars.nix {inherit grammarOverlays includeGrammarIf;};
-  runtimeDir = runCommand "helix-runtime" {} ''
+  grammars = callPackage ./grammars.nix { inherit grammarOverlays includeGrammarIf; };
+  runtimeDir = runCommand "helix-runtime" { } ''
     mkdir -p $out
     ln -s ${./runtime}/* $out
     rm -r $out/grammars
@@ -55,7 +55,9 @@ in
 
     buildType = "release";
 
-    name = with builtins; (fromTOML (readFile ./helix-term/Cargo.toml)).package.name;
+    pname = with builtins; (fromTOML (readFile ./helix-term/Cargo.toml)).package.name;
+    version = with builtins; (fromTOML (readFile ./Cargo.toml)).workspace.package.version + lib.optionalString (gitRev != null) gitRev;
+
     src = fs.toSource {
       root = ./.;
       fileset = src;
