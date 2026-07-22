@@ -71,7 +71,7 @@ in
 # Then we must append the shared library extension to all the
 # name so the symlinks have the correct name
 linkFarm "consolidated-helix-grammars" (
-  lib.mapAttrs' (name: lib.nameValuePair (name + extension)) (
-    lib.filterAttrs (lib.const lib.isDerivation) extensibleGrammars
-  )
+  lib.mapAttrs' (
+    name: artifact: lib.nameValuePair (name + extension) "${artifact}/${name}${extension}"
+  ) (lib.filterAttrs (lib.const lib.isDerivation) extensibleGrammars)
 )
